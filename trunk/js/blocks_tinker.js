@@ -1,4 +1,106 @@
+// ========== SONIFICATION BLOCKLY ==============
 
+Blockly.Blocks['init_sonification'] = {
+  category: 'Sonification',
+  helpUrl: 'http://www.example.com/',
+  init: function() {
+    this.appendDummyInput()
+        .appendField("use sonification toolkit");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+    this.setTooltip('');
+  }
+};
+
+
+Blockly.Blocks['ugen'] = {
+  category: 'Sonification',
+  helpUrl: 'http://www.example.com/',
+  init: function() {
+    this.appendDummyInput()
+        //.appendField(new Blockly.FieldDropdown([[{"src":"http://i.imgur.com/nrNWnyK.png","width":50,"height":30,"alt":"sine wave"},"SinOsc"], [{"src":"http://i.imgur.com/ChLYYLM.png","width":50,"height":30,"alt":"triangle wave"},"TriOsc"], [{"src":"http://i.imgur.com/jnWrCiS.png","width":50,"height":30,"alt":"square wave"},"SqrOsc"], [{"src":"http://i.imgur.com/6mrVUEL.png","width":50,"height":30,"alt":"sawtooth wave"},"SawOsc"]]), "OscType")
+        //.appendField(new Blockly.FieldDropdown([['sine wave: <img src="http://i.imgur.com/nrNWnyK.png" alt="sine wave" height="30" width="50">',"SinOsc"], ["triangle wave","TriOsc"], ["square wave","SqrOsc"], ["sawtooth wave","SawOsc"]]), "OscType")
+        .appendField(new Blockly.FieldDropdown([["a sine wave","sin"], ["a triangle wave","tri"], ["a square wave","sqr"], ["a sawtooth wave","saw"]]), "OscType")
+        .appendField("called")
+        .appendField(new Blockly.FieldTextInput("my_sound"), "varname");
+    this.setInputsInline(false);
+    this.setOutput(true, "UGen");
+    this.setColour(275);
+    this.setTooltip('');
+  }
+};
+
+
+Blockly.Blocks['ugen_params'] = {
+  category: 'Sonification',
+  helpUrl: 'http://www.example.com/',
+  init: function() {
+    this.appendValueInput("ugen_param")
+        .setCheck("UGen")
+        .appendField(new Blockly.FieldDropdown([["the frequency of","freq"], ["the note of","mtofreq"], ["the loudness of","gain"]]), "param_name");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(false, null);
+    this.setColour(230);
+    this.setTooltip('');
+  }
+};
+
+
+Blockly.Blocks['data_processor'] = {
+  category: 'Sonification',
+  helpUrl: 'http://www.example.com/',
+  init: function() {
+    this.appendDummyInput()
+        .appendField("map")
+        //.appendField(new Blockly.FieldDropdown([["display","display"], [{"src":"http://i.imgur.com/qMOL6mK.png","width":50,"height":30,"alt":"linear"},"linear"], [{"src":"http://i.imgur.com/3JFdvv4.png","width":50,"height":30,"alt":"reverse"},"reverse"], [{"src":"http://i.imgur.com/ktFMewY.png","width":50,"height":30,"alt":"constant"},"const"], [{"src":"http://i.imgur.com/lQ8YxGo.png","width":50,"height":30,"alt":"exponential"},"expcos"], [{"src":"http://i.imgur.com/pAq1pH9.png","width":50,"height":30,"alt":"logistic"},"logisticcos"], [{"src":"http://i.imgur.com/Wm1tc6T.png","width":50,"height":30,"alt":"step"},"step"], [{"src":"http://i.imgur.com/pHa6GMA.png","width":50,"height":30,"alt":"ramp"},"sineramp"], [{"src":"http://i.imgur.com/7e3N9ws.png","width":50,"height":30,"alt":"logistic2"},"logistic"], [{"src":"http://i.imgur.com/x0rrq1w.png","width":50,"height":30,"alt":"exp2"},"exp"], [{"src":"http://i.imgur.com/1JhzSru.png","width":50,"height":30,"alt":"gaussian"},"gaussian"]]), "process_type")
+        .appendField(new Blockly.FieldDropdown([["display","display"], ["linear","linear"], ["reverse","reverse"], ["constant","const"], ["exponential","expcos"], ["logistic","logisticcos"], ["step","step"], ["ramp","sineramp"], ["logistic2","logistic"], ["exp2","exp"], ["gaussian","gaussian"]]), "process_type")
+        .appendField("called")
+        .appendField(new Blockly.FieldTextInput("my_processor"), "processor_name");
+    this.setPreviousStatement(true, "DataProcessor");
+    this.setNextStatement(true, "DataProcessor");
+    this.setColour(0);
+    this.setTooltip('');
+  }
+};
+
+
+Blockly.Blocks['sonify'] = {
+  category: 'Sonification',
+  helpUrl: 'http://www.example.com/',
+  init: function() {
+    this.appendValueInput("sensor")
+        .setCheck(null)
+        .appendField("transform sensor");
+    this.appendStatementInput("mapping")
+        .setCheck(null)
+        .appendField("with");
+    this.appendDummyInput()
+        .appendField("and scale from [0, 1] to [")
+        //.appendField(new Blockly.FieldNumber(30), "scale_min")
+        .appendField(new Blockly.FieldTextInput("30"), "scale_min")
+        .appendField(",")
+        //.appendField(new Blockly.FieldNumber(100), "scale_max")
+        .appendField(new Blockly.FieldTextInput("100"), "scale_max")
+        .appendField("]");
+    this.appendDummyInput()
+        .appendField("then connect this");
+    this.appendStatementInput("output")
+        .setCheck(null)
+        .appendField("to");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([["and make sound","dac"], ["and be silent","blackhole"]]), "output_sample_sucker");
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+    this.setTooltip('');
+  }
+};
+
+
+// ============= CLASSIC BLOCKLY ================
 
 Blockly.Blocks.action_beep = {
   category: 'Action',

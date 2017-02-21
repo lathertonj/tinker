@@ -1011,3 +1011,78 @@ Blockly.GogoCode['test_do_sth'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.GogoCode.ORDER_NONE];
 };
+
+// ================================================
+
+// ================= SONIFICATION =================
+Blockly.GogoCode['init_sonification'] = function(block) {
+  // TODO: Assemble JavaScript into code variable.
+  var code = '<span class="c330">sendmessage "@sonification,on" 1</span>\n';
+  return code;
+};
+
+Blockly.GogoCode['ugen'] = function(block) {
+  var dropdown_osctype = block.getFieldValue('OscType');
+  var text_varname = block.getFieldValue('varname');
+  // TODO: Assemble JavaScript into code variable.
+  // TODO: make it something that sonify block can parse, rather than something directly translatable to code
+  var code = 'newosc/' + dropdown_osctype + '/' + text_varname;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.GogoCode['ugen_params'] = function(block) {
+  var dropdown_param_name = block.getFieldValue('param_name');
+  var value_ugen_param = Blockly.GogoCode.valueToCode(block, 'ugen_param', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = value_ugen_param + '/param/' + dropdown_param_name + '/';
+  return code;
+};
+
+Blockly.GogoCode['data_processor'] = function(block) {
+  var dropdown_process_type = block.getFieldValue('process_type');
+  var text_processor_name = block.getFieldValue('processor_name');
+  // TODO: Assemble JavaScript into code variable.
+  var code = /*'data_processor/' + */ dropdown_process_type + '/' + text_processor_name + '/';
+  return code;
+};
+
+Blockly.GogoCode['sonify'] = function(block) {
+  var value_sensor = Blockly.GogoCode.valueToCode(block, 'sensor', Blockly.JavaScript.ORDER_ATOMIC);
+  var statements_mapping = Blockly.GogoCode.statementToCode(block, 'mapping');
+  var number_scale_min = block.getFieldValue('scale_min');
+  var number_scale_max = block.getFieldValue('scale_max');
+  var statements_output = Blockly.GogoCode.statementToCode(block, 'output');
+  var dropdown_output_sample_sucker = block.getFieldValue('output_sample_sucker');
+  // TODO: Assemble JavaScript into code variable.
+  
+  // first, construct mapping        // no whitespace // strip end whitespace (unnecessary)
+  var mapping = statements_mapping.replace(/\s/g,''); //.replace(/^\s+|\s+$/g, '');
+  // second, construct scale
+  var scale = 'scale/' + number_scale_min + '/' + number_scale_max + '/';
+  
+  console.log(statements_output);
+  var osc_elements = statements_output.split('/');
+  var osc_type = osc_elements[1];
+  // no whitespace
+  var osc_name = osc_elements[2].replace(/\s/g,'')
+  var param_name = osc_elements[4];
+  
+  // third, send commands to setup audio graph
+  var code = '<span class="c330">sendmessage "@sonification,newosc/' + 
+          osc_type + '/' + osc_name + 
+          '" 1</span>\n';
+  code += '<span class="c330">sendmessage "@sonification,connectosc/' + 
+          osc_type + '/' + osc_name + '/' + dropdown_output_sample_sucker + '/' + dropdown_output_sample_sucker +
+          '" 1</span>\n';
+          
+  // while-true, send the value of the sensor 
+  code += 'forever\n[\n ' + 
+          '<span class="c330">sendmessage "@sonification,datapipe/' + 
+             mapping + scale + osc_type + '/' + osc_name + '/' + param_name +
+          '" sensor1</span>\n' + 
+          ' wait 1 \n]\n';
+  
+  return code;
+};
+
